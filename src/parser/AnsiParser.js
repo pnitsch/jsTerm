@@ -55,7 +55,7 @@ TERM.AnsiParser = function (viewer){
 				}
 			} else if( this.hasException(b) ) {
 				this._exceptionsLib[b]( b, this._bytes );
-			} else if(b >= 32) {
+			} else if(b >= SPACE) {
 				viewer.drawCharacter(b);
 			} else {
 				switch(b) {
