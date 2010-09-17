@@ -1,3 +1,7 @@
+/**
+ * @author Peter Nitsch
+ */
+
 TERM.Cursor = function (){
 	
 	this.foregroundColor = WHITE_NORMAL;

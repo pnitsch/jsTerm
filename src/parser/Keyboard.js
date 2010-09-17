@@ -1,3 +1,7 @@
+/**
+ * @author Peter Nitsch
+ */
+
 const KEYBOARD_LEFT = 37;
 const KEYBOARD_RIGHT = 39;
 const KEYBOARD_UP = 38;

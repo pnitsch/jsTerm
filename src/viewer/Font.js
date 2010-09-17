@@ -1,3 +1,7 @@
+/**
+ * @author Peter Nitsch
+ */
+
 TERM.Font = function() {
 	
 	this.width = 8;

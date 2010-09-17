@@ -1,3 +1,7 @@
+/**
+ * @author Peter Nitsch
+ */
+
 const IAC = 255;
 const GA = 249;
 const WILL = 251;

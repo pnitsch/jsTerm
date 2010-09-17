@@ -1,3 +1,7 @@
+/**
+ * @author Peter Nitsch
+ */
+
 TERM.Point = function() {
 	
 	this.x = 0;

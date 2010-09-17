@@ -1,3 +1,7 @@
+/**
+ * @author Peter Nitsch
+ */
+
 TERM.Socket = function (){
 	
 	var ws;

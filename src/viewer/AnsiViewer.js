@@ -1,3 +1,7 @@
+/**
+ * @author Peter Nitsch
+ */
+
 TERM.AnsiViewer = function (fontmap){
 	
 	this.cursor = new TERM.Cursor();

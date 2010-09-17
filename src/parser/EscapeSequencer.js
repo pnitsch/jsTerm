@@ -1,3 +1,7 @@
+/**
+ * @author Peter Nitsch
+ */
+
 TERM.EscapeSequencer = function (viewer){
 	
 	var viewer = viewer;

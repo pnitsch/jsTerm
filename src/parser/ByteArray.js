@@ -1,3 +1,7 @@
+/**
+ * @author Peter Nitsch
+ */
+
 TERM.ByteArray = function (bytes){
 	
 	this.position = 0;

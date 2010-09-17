@@ -1,3 +1,7 @@
+/**
+ * @author Peter Nitsch
+ */
+
 TERM.Telnet = function (viewer){
 	
 	var parser = viewer.parser;

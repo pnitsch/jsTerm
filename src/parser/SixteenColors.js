@@ -1,3 +1,7 @@
+/**
+ * @author Peter Nitsch
+ */
+
 const BLACK_NORMAL = "#000000";
 const BLACK_BOLD = "#545454";
 const RED_NORMAL = "#a80000";

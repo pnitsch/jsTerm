@@ -1,4 +1,8 @@
-TERM.Session = function (){
+/**
+ * @author Peter Nitsch
+ */
+
+TERM.Session = function (fontMapURL){
 	
 	var viewer;
 	var commands;
@@ -75,7 +79,7 @@ TERM.Session = function (){
 
 		initKeyboard();
 	};
-	fontmap.src = "jsTerm/src/fonts/ansilove_font_pc_80x25.png";
+	fontmap.src = fontMapURL;
 	
 	this.connect = function(host, port) {
 		if(TERM.socket != undefined && TERM.socket.readyState == 1) {

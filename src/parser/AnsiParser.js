@@ -1,3 +1,7 @@
+/**
+ * @author Peter Nitsch
+ */
+
 TERM.AnsiParser = function (viewer){
 	
 	var viewer = viewer;
