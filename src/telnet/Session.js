@@ -75,7 +75,7 @@ TERM.Session = function (){
 
 		initKeyboard();
 	};
-	fontmap.src = "img/ansilove_font_pc_80x25_.png";
+	fontmap.src = "jsTerm/src/fonts/ansilove_font_pc_80x25.png";
 	
 	this.connect = function(host, port) {
 		if(TERM.socket != undefined && TERM.socket.readyState == 1) {

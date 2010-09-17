@@ -22,7 +22,7 @@ TERM.ByteArray.prototype = {
 	},
 	get length (){
 		return this.stringdata.length;
-	};
+	}
 	
 };
 

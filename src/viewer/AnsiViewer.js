@@ -56,6 +56,8 @@ TERM.AnsiViewer = function (fontmap){
 	};
 	
 	this.draw = function(charCode) {
+		//console.log(charCode +" "+ this.cursor.x +" "+ this.cursor.y)
+		
 		ctx.fillStyle = this.cursor.backgroundColor;
 		ctx.fillRect(this.cursor.x, this.cursor.y, font.width, font.height);
 
@@ -159,8 +161,8 @@ TERM.AnsiViewer = function (fontmap){
 	};
 
 	this.home = function() {
-		this.cursor.position.x = 0;
-		this.cursor.position.y = (topMargin-1) * this.cursor.maxLineheight;
+		this.cursor.x = 0;
+		this.cursor.y = (topMargin-1) * this.cursor.maxLineHeight;
 	};
 
 	this.scrollScreen = function(start, end) {

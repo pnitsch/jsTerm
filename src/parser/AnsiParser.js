@@ -41,7 +41,7 @@ TERM.AnsiParser = function (viewer){
 	};
 	
 	this.readByte = function (b) {
-		console.log(b);
+		
 		if(b == ESCAPE) {
 			escapeCommand = [];
 			escapeCommand.push(b);
