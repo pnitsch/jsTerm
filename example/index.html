@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+<head>
+  <title>jsTerm Example</title>
+  <script src='../src/Term.js'></script>
+  <script src='../src/parser/Keyboard.js'></script>
+  <script src='../src/parser/CharacterCodes.js'></script>
+  <script src='../src/parser/SixteenColors.js'></script>
+  <script src='../src/parser/ByteArray.js'></script>
+  <script src='../src/parser/EscapeSequencer.js'></script>
+  <script src='../src/parser/AnsiParser.js'></script>
+  <script src='../src/parser/NVTCodes.js'></script>
+  <script src='../src/parser/Telnet.js'></script>
+  <script src='../src/viewer/Point.js'></script>
+  <script src='../src/viewer/Font.js'></script>
+  <script src='../src/viewer/Cursor.js'></script>
+  <script src='../src/viewer/AnsiViewer.js'></script>
+  <script src='../src/telnet/Socket.js'></script>
+  <script src='../src/telnet/Session.js'></script>
+
+  <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js'></script>
+  <script>
+	$(document).ready(function(){
+
+		var session = new TERM.Session("../fonts/ansilove_font_pc_80x25.png");
+		var host = document.getElementById("host");
+		var port = document.getElementById("port");
+		var connect = document.getElementById("connect");
+		var bookmarks = document.getElementById("bookmarks");
+
+		connect.onclick = function() {
+			session.connect(host.value, port.value);
+		}
+
+		bookmarks.onchange = function() {
+			var val = bookmarks.value;
+			if(val!=""){
+				var i = val.indexOf(":");
+				host.value = val.slice(0, i);
+				port.value = val.slice(i+1, val.length);
+			}
+		}
+
+	});
+  </script>
+</head>
+<body>
+		<div id="terminal"><canvas id="canvas" width="650" height="440"></canvas> </div>
+
+		<div id="panel">
+			<select id="bookmarks" name="bookmarks">
+			<option value="">- Bookmarks -</option>
+			<option value="towel.blinkenlights.nl:23">towel.blinkenlights.nl</option>
+			<option value="vert.synchro.net:23">vert.synchro.net</option>
+			<option value="bbs.pharcyde.org:23">bbs.pharcyde.org</option>
+			<option value="d1st.org:23">d1st.org</option>
+			<option value="bbs.electronicchicken.com:23">bbs.electronicchicken.com</option>
+			<option value="entropybbs.co.nz:23">entropybbs.co.nz</option>
+			<option value="lunatic.zapto.org:23">lunatic.zapto.org</option>
+			<option value="bbs.roughneckbbs.com:23">bbs.roughneckbbs.com</option>
+			<option value="masqueradebbs.com:23">masqueradebbs.com</option>
+			<option value="alecoexp.dyndns.org:23">alecoexp.dyndns.org</option>
+			<option value="bluewavebbs.dyndns.org:23">bluewavebbs.dyndns.org</option>
+			<option value="bbs.akroncdnr.com:23">bbs.akroncdnr.com</option>
+			<option value="cbliss.synchro.net:23">cbliss.synchro.net</option>
+			<option value="ds69bbs.com:23">ds69bbs.com</option>
+			<option value="bbs.defcon.no:23">bbs.defcon.no</option>
+			<option value="bbs.dmine.net:23">bbs.dmine.net</option>
+			<option value="bbs.diskshop.ca:23">bbs.diskshop.ca</option>	
+			<option value="eotd.com:23">eotd.com</option>
+			<option value="flashpointbbs.no-ip.org:23">flashpointbbs.no-ip.org</option>
+			<option value="fjbbs.gotdns.com:23">fjbbs.gotdns.com</option>
+			<option value="isisunveiled.no-ip.org:23">isisunveiled.no-ip.org</option>
+			<option value="bbs.zeusdev.co.uk:23">bbs.zeusdev.co.uk</option>
+			<option value="musicstation.spb.ru:5223">musicstation.spb.ru</option>
+			<option value="phybbs.dyndns.org:23">phybbs.dyndns.org</option>
+			<option value="rdfig.net:23">rdfig.net</option>
+			<option value="redhill.net.nz:4500">redhill.net.nz</option>
+			<option value="bbs.dxrw.org:23">bbs.dxrw.org</option>
+			<option value="bbs.scansoutheasternmass.com:23">bbs.scansoutheasternmass.com</option>
+			<option value="thechangeosp.nl:23">thechangeosp.nl</option>
+			<option value="darkside.dtdns.net:23">darkside.dtdns.net</option>
+			<option value="white-squirrel.dnsalias.net:23">white-squirrel.dnsalias.net</option>
+			<option value="wildcatcastle.gotdns.com:23">wildcatcastle.gotdns.com</option>
+			<option value="bbs.zzap.org:23">bbs.zzap.org</option>
+			</select>
+			<input id="host" type="text" value="towel.blinkenlights.nl">
+			<input id="port" type="text" value="23">
+			<input id="connect" type="button" value="Connect">
+		</div>
+</body>
+</html>
