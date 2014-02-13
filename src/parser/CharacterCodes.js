@@ -2,7 +2,7 @@
  * @author Peter Nitsch
  */
 
-const NULL = 0
+const NULL = 0;
 const START_OF_HEADING = 1;
 const START_OF_TEXT = 2;
 const END_OF_TEXT = 3;

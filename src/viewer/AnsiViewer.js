@@ -53,7 +53,7 @@ TERM.AnsiViewer = function (fontmap){
 		this.draw(character);
 		this.cursor.moveForward(1);
 
-		if(!this.cursor.infinitewidth && this.cursor.x + this.cursor.columnwidth > this.cursor.maxColumnwidth * this.cursor.columnwidth){
+		if(!this.cursor.infiniteWidth && this.cursor.x + this.cursor.columnWidth > this.cursor.maxColumnWidth * this.cursor.columnWidth){
 			this.moveDown(1);
 			this.cursor.carriageReturn();
 		}
@@ -90,8 +90,8 @@ TERM.AnsiViewer = function (fontmap){
 	};
 
 	this.moveDown = function(val) {
-		if(this.cursor.y >= this.cursor.lineheight*(botMargin-1) && scroll){
-			this.scrollUp(1);
+		if(this.cursor.y >= this.cursor.lineHeight*(this.cursor.maxLineHeight-val) && scroll){
+			this.scrollUp(val);
 		} else {
 			this.cursor.moveDown(val);
 		}
@@ -106,9 +106,14 @@ TERM.AnsiViewer = function (fontmap){
 	};
 
 	this.reposition = function(x, y) {
-		this.cursor.x = x * this.cursor.columnwidth;
-		this.cursor.y = y * this.cursor.lineheight;
+		this.cursor.x = x * this.cursor.columnWidth;
+		this.cursor.y = y * this.cursor.lineHeight;
 	};
+	
+	this.repositionColumn = function(x) {
+		this.cursor.x = x * this.cursor.columnWidth;
+	};
+
 
 	this.restorePosition = function() {
 		this.cursor.x = _savedPosition.x;
@@ -121,40 +126,48 @@ TERM.AnsiViewer = function (fontmap){
 	};
 
 	this.displayCleared = function() {
-		ctx.fillStyle = BLACK_NORMAL;
-		ctx.fillRect(0, 0, this.cursor.maxColumnwidth * this.cursor.columnwidth, this.cursor.maxLineheight * this.cursor.lineheight);
+		ctx.fillStyle = this.cursor.backgroundColor;
+		ctx.fillRect(0, 0, this.cursor.maxColumnWidth * this.cursor.columnWidth, this.cursor.maxLineHeight * this.cursor.lineHeight);
 	};
+
 	
 	this.eraseUp = function() {
-		ctx.fillStyle = BLACK_NORMAL;
-		ctx.fillRect(0, 0, this.cursor.maxColumnwidth * this.cursor.columnwidth, this.cursor.y);
+		ctx.fillStyle = this.cursor.backgroundColor;
+		ctx.fillRect(0, 0, this.cursor.maxColumnWidth * this.cursor.columnWidth, this.cursor.y);
 	};
 
 	this.eraseScreen = function() {
 		ctx.fillStyle = this.cursor.backgroundColor;
-		ctx.fillRect(0, 0, this.cursor.maxColumnwidth * this.cursor.columnwidth, this.cursor.maxLineheight * this.cursor.lineheight);
+		ctx.fillRect(0, 0, this.cursor.maxColumnWidth * this.cursor.columnWidth, this.cursor.maxLineHeight * this.cursor.lineHeight);
 	};
 
 	this.eraseDown = function() {
-		ctx.fillStyle = BLACK_NORMAL;
-		ctx.fillRect(0, this.cursor.y, this.cursor.maxColumnwidth * this.cursor.columnwidth, (this.cursor.maxLineheight * this.cursor.lineheight) - this.cursor.y);
+		ctx.fillStyle = this.cursor.backgroundColor;
+		ctx.fillRect(0, this.cursor.y, this.cursor.maxColumnWidth * this.cursor.columnWidth, (this.cursor.maxLineHeight * this.cursor.lineHeight) - this.cursor.y);
 	};
 
 	this.eraseEndOfLine = function() {
-		ctx.fillStyle = BLACK_NORMAL;
-		var w = (this.cursor.maxColumnwidth * this.cursor.columnwidth) - (this.cursor.x - this.cursor.columnwidth);
-		ctx.fillRect(this.cursor.x, this.cursor.y, w, this.cursor.lineheight);
+		ctx.fillStyle = this.cursor.backgroundColor;
+		var w = (this.cursor.maxColumnWidth * this.cursor.columnWidth) - (this.cursor.x - this.cursor.columnWidth);
+		ctx.fillRect(this.cursor.x, this.cursor.y, w, this.cursor.lineHeight);
 	};
 
 	this.eraseStartOfLine = function() {
-		ctx.fillStyle = BLACK_NORMAL;
-		ctx.fillRect(0, this.cursor.y, this.cursor.x, this.cursor.lineheight);
+		ctx.fillStyle = this.cursor.backgroundColor;
+		ctx.fillRect(0, this.cursor.y, this.cursor.x, this.cursor.lineHeight);
 	};
 
 	this.eraseLine = function() {
-		ctx.fillStyle = BLACK_NORMAL;
-		ctx.fillRect(0, this.cursor.y, this.cursor.maxColumnwidth * this.cursor.columnwidth, this.cursor.lineheight);
+		ctx.fillStyle = this.cursor.backgroundColor;
+		ctx.fillRect(0, this.cursor.y, this.cursor.maxColumnWidth * this.cursor.columnWidth, this.cursor.lineHeight);
 	};
+	
+	this.eraseChars = function(val) {
+		ctx.fillStyle = this.cursor.backgroundColor;
+		var w = val * this.cursor.columnWidth;
+		ctx.fillRect(this.cursor.x, this.cursor.y, w, this.cursor.lineHeight);
+	};
+
 	
 	this.backgroundColorChanged = function(color) {
 		this.cursor.backgroundColor = color;
@@ -166,20 +179,22 @@ TERM.AnsiViewer = function (fontmap){
 
 	this.home = function() {
 		this.cursor.x = 0;
-		this.cursor.y = (topMargin-1) * this.cursor.maxLineHeight;
+		this.cursor.y = 0;
 	};
 
 	this.scrollScreen = function(start, end) {
 		topMargin = start;
 		botMargin = end;
-
-		handleHome();
 	};
 			
 	this.scrollUp = function(val) {
-		var canvasData = ctx.getImageData(0, topMargin * this.cursor.lineheight, this.cursor.maxColumnwidth*this.cursor.columnwidth, this.cursor.lineheight * (botMargin-topMargin));
+		var x=0;
+		var y= topMargin * this.cursor.lineHeight;
+		var width = canvas.width ;
+		var height = this.cursor.lineHeight * (this.cursor.maxLineHeight -1);
+		var canvasData = ctx.getImageData(x,y ,width , height );
 		this.displayCleared();
-		ctx.putImageData(canvasData, 0, this.cursor.lineheight*(topMargin-1));
+		ctx.putImageData(canvasData, 0, 0 );
 	};
 	
 	this.clearCanvas();

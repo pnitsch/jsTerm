@@ -14,7 +14,8 @@ TERM.EscapeSequencer = function (viewer){
 	
 	this.init = function() {
 		this.actionCharacterLib[ LATIN_CAPITAL_LETTER_H ] = this.cursorPosition;	
-		this.actionCharacterLib[ LATIN_SMALL_LETTER_F ] = this.cursorPosition;	
+		this.actionCharacterLib[ LATIN_SMALL_LETTER_F ] = this.cursorPosition;
+		this.actionCharacterLib[ LATIN_CAPITAL_LETTER_G ] = this.cursorPosition;
 		this.actionCharacterLib[ LATIN_CAPITAL_LETTER_A ] = this.cursorUp;	
 		this.actionCharacterLib[ LATIN_CAPITAL_LETTER_B ] = this.cursorDown;	
 		this.actionCharacterLib[ LATIN_CAPITAL_LETTER_C] = this.cursorForward;	
@@ -30,6 +31,7 @@ TERM.EscapeSequencer = function (viewer){
 		this.actionCharacterLib[ LATIN_SMALL_LETTER_P ] = this.setKeyboardStrings;	
 		this.actionCharacterLib[ LATIN_CAPITAL_LETTER_M ] = this.scrollUp;
 		this.actionCharacterLib[ LATIN_SMALL_LETTER_R ] = this.scrollScreen;
+		this.actionCharacterLib[ LATIN_CAPITAL_LETTER_X ] = this.eraseChars;
 		
 		// TO DO
 		this.actionCharacterLib[ LATIN_SMALL_LETTER_A ] = this.unused;	
@@ -116,22 +118,47 @@ TERM.EscapeSequencer = function (viewer){
 				}
 				column = parseInt(columnStr);
 				
+				column = (column>0) ? column-1 : 0;
+				line = (line>0) ? line-1 : 0;
+				
+				viewer.reposition(column, line);
+				
 			} else if(params.slice(2, params.indexOf(lastCharacter)).length > 0){
-				lineArray = params.slice(2, params.length-1);
-				for( i=0; i<lineArray.length; i++ ){
-					lineStr += (lineArray[i] - 48).toString();
+				if (lastCharacter == LATIN_CAPITAL_LETTER_H || lastCharacter == LATIN_SMALL_LETTER_F ) {
+					lineArray = params.slice(2, params.length-1);
+					for( i=0; i<lineArray.length; i++ ){
+						lineStr += (lineArray[i] - 48).toString();
+					}
+					line = parseInt(lineStr);
+					
+					column = (column>0) ? column-1 : 0;
+					line = (line>0) ? line-1 : 0;
+					
+					viewer.reposition(column, line);
+					
+				} else if (lastCharacter == LATIN_CAPITAL_LETTER_G) {
+					columnArray = params.slice(2, params.length-1);
+					for( i=0; i<columnArray.length; i++ ){
+						columnStr += (columnArray[i] - 48).toString();
+					}
+					column = parseInt(columnStr);
+					column = (column>0) ? column-1 : 0;
+					
+					viewer.repositionColumn(column);
 				}
-				line = parseInt(lineStr);
 			} 
 			
-			column = (column>0) ? column-1 : 0;
-			line = (line>0) ? line-1 : 0;
 			
-			viewer.reposition(column, line);
 		}
 	};
+
 	
 	this.cursorUp = function(params) {
+		if (params[1] == LEFT_PARENTHESIS|| params[1] == RIGHT_PARENTHESIS ) 
+		{
+			//Set Alternate char set A
+			return;
+	    }
 		var valueArray = params.slice(2, params.length-1);
 		var valueStr = "";
 		for( i=0; i<valueArray.length; i++ ){
@@ -143,6 +170,11 @@ TERM.EscapeSequencer = function (viewer){
 	};
 	
 	this.cursorDown = function(params) {
+		if (params[1] == LEFT_PARENTHESIS|| params[1] == RIGHT_PARENTHESIS ) 
+		{
+			//Set Alternate char set B
+			return;
+	    }
 		var valueArray = params.slice(2, params.length-1);
 		var valueStr = "";
 		for( i=0; i<valueArray.length; i++ ){
@@ -154,6 +186,11 @@ TERM.EscapeSequencer = function (viewer){
 	};
 	
 	this.cursorForward = function(params) {		
+		if (params[1] == LEFT_PARENTHESIS|| params[1] == RIGHT_PARENTHESIS ) 
+		{
+			//Set Alternate char set C
+			return;
+	    }
 		var valueArray = params.slice(2, params.length-1);
 		var valueStr = "";
 		for( i=0; i<valueArray.length; i++ ){
@@ -165,6 +202,11 @@ TERM.EscapeSequencer = function (viewer){
 	};
 	
 	this.cursorBackward = function(params) {
+		if (params[1] == LEFT_PARENTHESIS|| params[1] == RIGHT_PARENTHESIS ) 
+		{
+			//Set Alternate char set D
+			return;
+	    }
 		var valueArray = params.slice(2, params.length-1);
 		var valueStr = "";
 		for( i=0; i<valueArray.length; i++ ){
@@ -253,7 +295,7 @@ TERM.EscapeSequencer = function (viewer){
 								_currentForegroundColor = (_bold) ? _boldColors[position] : _normalColors[position];
 								viewer.foregroundColorChanged(_currentForegroundColor);
 							}
-							
+							i++;
 						}
 					}
 				break;
@@ -270,7 +312,7 @@ TERM.EscapeSequencer = function (viewer){
 								_currentBackgroundColor = _normalColors[position];
 								viewer.backgroundColorChanged(_currentBackgroundColor);
 							}
-						
+						    i++;
 						/* Underline ON */		
 						} else {
 							// TO DO
@@ -286,7 +328,13 @@ TERM.EscapeSequencer = function (viewer){
 				/* Reverse ON */
 				case DIGIT_SEVEN:
 					if(params[i-1] == SEMICOLON || params[i-1] == LEFT_SQUARE_BRACKET)
+					{
 						_reverse = true;
+						_currentForegroundColor = viewer.cursor.backgroundColor;
+						_currentBackgroundColor = viewer.cursor.foregroundColor;
+						viewer.backgroundColorChanged(viewer.cursor.foregroundColor);
+						viewer.foregroundColorChanged(_currentForegroundColor);
+			        }
 				break;
 				
 				/* Concealed ON */
@@ -344,10 +392,21 @@ TERM.EscapeSequencer = function (viewer){
 			viewer.eraseStartOfLine();
 		} else if( params[2]==DIGIT_TWO ) {
 			viewer.eraseLine();
-		} else {
+		} else  if ( params[2]==DIGIT_ZERO || params[2]==LATIN_CAPITAL_LETTER_K ){
 			viewer.eraseEndOfLine();
 		}		
 	};
+	
+    this.eraseChars = function(params) {
+		var valueArray = params.slice(2, params.length-1);
+		var valueStr = "";
+		for( i=0; i<valueArray.length; i++ ){
+			valueStr += (valueArray[i] - 48).toString();
+		}
+		var value = (valueStr.length > 0) ? parseInt(valueStr) : 1;
+		viewer.eraseChars(value);
+	};
+
 	
 	this.eraseDisplay = function(params) {
 		if( params[2]==DIGIT_ONE ){
