@@ -45,7 +45,6 @@ TERM.AnsiParser = function (viewer){
 	};
 	
 	this.readByte = function (b) {
-		
 		if(b == ESCAPE) {
 			escapeCommand = [];
 			escapeCommand.push(b);
@@ -64,21 +63,18 @@ TERM.AnsiParser = function (viewer){
 			} else {
 				switch(b) {
 					case BACKSPACE:
-						viewer.moveBackward(1, true);
-					break;
-
+						viewer.moveBackward(1, false);
+						break;
 					case LINE_FEED:
 						viewer.moveDown(1);
-					break;
-
+						break;
 					case CARRIAGE_RETURN:
 						viewer.carriageReturn();
-					break;
-
+						break;
 					case FORM_FEED:
 						viewer.eraseScreen();
 						viewer.reposition(0, 0);
-					break;
+						break;
 				}
 			}
 		}

@@ -38,25 +38,41 @@ TERM.Session = function (fontMapURL){
 				break;
 			case KEYBOARD_LEFT:
 				TERM.socket.writeByte(ESCAPE);
-				TERM.socket.writeByte(LATIN_CAPITAL_LETTER_O);
+				if (viewer.cursorKeyAppMode) {
+					TERM.socket.writeByte(LEFT_SQUARE_BRACKET);
+				} else {
+					TERM.socket.writeByte(LATIN_CAPITAL_LETTER_O);
+				}
 				TERM.socket.writeByte(LATIN_CAPITAL_LETTER_D);
 				handled = true;
 				break;
 			case KEYBOARD_RIGHT:
 				TERM.socket.writeByte(ESCAPE);
-				TERM.socket.writeByte(LATIN_CAPITAL_LETTER_O);
+				if (viewer.cursorKeyAppMode) {
+					TERM.socket.writeByte(LEFT_SQUARE_BRACKET);
+				} else {
+					TERM.socket.writeByte(LATIN_CAPITAL_LETTER_O);
+				}
 				TERM.socket.writeByte(LATIN_CAPITAL_LETTER_C);
 				handled = true;
 				break;
 			case KEYBOARD_UP:
 				TERM.socket.writeByte(ESCAPE);
-				TERM.socket.writeByte(LATIN_CAPITAL_LETTER_O);
+				if (viewer.cursorKeyAppMode) {
+					TERM.socket.writeByte(LEFT_SQUARE_BRACKET);
+				} else {
+					TERM.socket.writeByte(LATIN_CAPITAL_LETTER_O);
+				}
 				TERM.socket.writeByte(LATIN_CAPITAL_LETTER_A);
 				handled = true;
 				break;
 			case KEYBOARD_DOWN:
 				TERM.socket.writeByte(ESCAPE);
-				TERM.socket.writeByte(LATIN_CAPITAL_LETTER_O);
+				if (viewer.cursorKeyAppMode) {
+					TERM.socket.writeByte(LEFT_SQUARE_BRACKET);
+				} else {
+					TERM.socket.writeByte(LATIN_CAPITAL_LETTER_O);
+				}
 				TERM.socket.writeByte(LATIN_CAPITAL_LETTER_B);
 				handled = true;
 				break;
@@ -103,7 +119,6 @@ TERM.Session = function (fontMapURL){
 				}
 				break;
 			case KEYBOARD_ESC:
-				TERM.socket.writeByte(KEYBOARD_ESC);
 				TERM.socket.writeByte(KEYBOARD_ESC);
 				handled = true;
 				break;
@@ -205,7 +220,23 @@ TERM.Session = function (fontMapURL){
 				handled = true;
 				break;
 			default:
-				break;
+				if (key >= 32 && key <= 127) {
+					if (event.ctrlKey) {
+						switch (key) {
+						    // For historic reasons, some control characters are treated specially
+					        case /* 3 */ 51: key  =  27; break;
+					        case /* 4 */ 52: key  =  28; break;
+					        case /* 5 */ 53: key  =  29; break;
+					        case /* 6 */ 54: key  =  30; break;
+					        case /* 7 */ 55: key  =  31; break;
+					        case /* 8 */ 56: key  = 127; break;
+					        case /* ? */ 63: key  = 127; break;
+					        default:         key &=  31; break;
+						}
+						TERM.socket.writeByte(key);
+						handled = true;
+					}
+				}
 			}
 			if (handled) {
 				if (event.preventDefault !== undefined )

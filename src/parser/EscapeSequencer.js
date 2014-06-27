@@ -29,11 +29,15 @@ TERM.EscapeSequencer = function (viewer){
 		this.actionCharacterLib[ LATIN_SMALL_LETTER_H ] = this.setMode;	
 		this.actionCharacterLib[ LATIN_SMALL_LETTER_L ] = this.resetMode;	
 		this.actionCharacterLib[ LATIN_SMALL_LETTER_P ] = this.setKeyboardStrings;	
-		this.actionCharacterLib[ LATIN_CAPITAL_LETTER_M ] = this.scrollUp;
+		this.actionCharacterLib[ LATIN_CAPITAL_LETTER_M ] = this.reverseIndex;
 		this.actionCharacterLib[ LATIN_SMALL_LETTER_R ] = this.scrollScreen;
 		this.actionCharacterLib[ LATIN_CAPITAL_LETTER_X ] = this.eraseChars;
+		this.actionCharacterLib[ LATIN_SMALL_LETTER_N ] = this.reportCursorPos;
 		
 		// TO DO
+		this.actionCharacterLib[ LESS_THAN_SIGN ] = this.unused;
+		this.actionCharacterLib[ GREATER_THAN_SIGN ] = this.unused;
+		this.actionCharacterLib[ EQUALS_SIGN ] = this.unused;
 		this.actionCharacterLib[ LATIN_SMALL_LETTER_A ] = this.unused;	
 		this.actionCharacterLib[ LATIN_SMALL_LETTER_D ] = this.unused;	
 		this.actionCharacterLib[ LATIN_SMALL_LETTER_E ] = this.unused;	
@@ -41,7 +45,6 @@ TERM.EscapeSequencer = function (viewer){
 		this.actionCharacterLib[ LATIN_CAPITAL_LETTER_P ] = this.unused;
 		this.actionCharacterLib[ LATIN_CAPITAL_LETTER_E ] = this.unused;	
 		this.actionCharacterLib[ LATIN_CAPITAL_LETTER_F ] = this.unused;
-		this.actionCharacterLib[ LATIN_CAPITAL_LETTER_X ] = this.unused;
 		
 	};
 	
@@ -181,11 +184,10 @@ TERM.EscapeSequencer = function (viewer){
 			valueStr += (valueArray[i] - 48).toString();
 		}
 		var value = (valueStr.length > 0) ? parseInt(valueStr) : 1;
-		
 		viewer.moveDown(value);
 	};
 	
-	this.cursorForward = function(params) {		
+	this.cursorForward = function(params) {
 		if (params[1] == LEFT_PARENTHESIS|| params[1] == RIGHT_PARENTHESIS ) 
 		{
 			//Set Alternate char set C
@@ -383,8 +385,8 @@ TERM.EscapeSequencer = function (viewer){
 		}
 	};
 	
-	this.scrollUp = function(params) {
-		viewer.scrollUp(1);
+	this.reverseIndex = function(params) {
+		viewer.reverseIndex();
 	};
 	
 	this.eraseLine = function(params) {
@@ -392,7 +394,7 @@ TERM.EscapeSequencer = function (viewer){
 			viewer.eraseStartOfLine();
 		} else if( params[2]==DIGIT_TWO ) {
 			viewer.eraseLine();
-		} else  if ( params[2]==DIGIT_ZERO || params[2]==LATIN_CAPITAL_LETTER_K ){
+		} else if ( params[2]==DIGIT_ONE || params[2]==LATIN_CAPITAL_LETTER_K ){
 			viewer.eraseEndOfLine();
 		}		
 	};
@@ -420,17 +422,45 @@ TERM.EscapeSequencer = function (viewer){
 		}
 	};
 	
-	// Terminal functions
-	this.setMode = function(){
-		// TO DO
+	this.reportCursorPos = function(params) {
+		if (params[2] == DIGIT_SIX){
+			var x = (viewer.cursor.x / viewer.cursor.columnWidth).toString();
+			var y = (viewer.cursor.y / viewer.cursor.lineHeight).toString();
+			var cmd=[];
+			cmd.push(ESCAPE);
+			cmd.push(LEFT_SQUARE_BRACKET);
+			for(var i=0;i<y.length;i++) {
+				cmd.push(y.charCodeAt(i));	
+			}
+			cmd.push(SEMICOLON);
+			
+			for(var i=0;i<x.length;i++) {
+				cmd.push(x.charCodeAt(i));	
+			}
+			cmd.push(LATIN_CAPITAL_LETTER_R);
+			TERM.socket.send(cmd);
+		}
 	};
 	
-	this.resetMode = function(){
-		// TO DO
+	// Terminal functions
+	this.setMode = function(params){
+		Util.Debug("Set Mode function : " + params[3]);
+		if (params[3] == DIGIT_ONE) {
+			Util.Debug("Set Cursor Keys to Application Mode");
+			viewer.cursorKeyToAppMode(true);
+		} 
+	};
+	
+	this.resetMode = function(params){
+		Util.Debug("Reset Mode function : " + params[3]);
+		if (params[3] == DIGIT_ONE) {
+			Util.Debug("Reset Cursor Keys from Application Mode back to Cursor Mode");
+			viewer.cursorKeyToAppMode(false);
+		}
 	};
 	
 	this.setKeyboardStrings = function(){
-		// TO DO
+		
 	};
 	
 	this.init();

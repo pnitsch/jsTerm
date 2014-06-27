@@ -2,7 +2,7 @@
  * @author Peter Nitsch
  */
 
-TERM.Cursor = function (){
+TERM.Cursor = function (width,height){
 	
 	this.foregroundColor = WHITE_NORMAL;
 	this.backgroundColor = BLACK_NORMAL;
