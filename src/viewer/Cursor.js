@@ -2,16 +2,16 @@
  * @author Peter Nitsch
  */
 
-TERM.Cursor = function (){
+TERM.Cursor = function (width,height){
 	
 	this.foregroundColor = WHITE_NORMAL;
 	this.backgroundColor = BLACK_NORMAL;
 	this.position = new TERM.Point();
-	this.maxColumnWidth = 80;
-	this.maxLineHeight = 25;
 	this.columnWidth = 8;
 	this.lineHeight = 16;
-	this.maxColumns = 80;
+	this.maxColumns = Math.floor(width / this.columnWidth);
+	this.maxColumnWidth = this.maxColumns;
+	this.maxLineHeight = Math.floor(height / this.lineHeight);
 	this.infiniteWidth = false;
 	this.infiniteHeight = false;
 		
