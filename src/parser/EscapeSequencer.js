@@ -442,12 +442,15 @@ TERM.EscapeSequencer = function (viewer){
 		}
 	};
 	
-	// Terminal functions
 	this.setMode = function(params){
 		Util.Debug("Set Mode function : " + params[3]);
 		if (params[3] == DIGIT_ONE) {
 			Util.Debug("Set Cursor Keys to Application Mode");
 			viewer.cursorKeyToAppMode(true);
+		}
+		if (params[3] == DIGIT_SEVEN) {
+			Util.Debug("AutoWrap mode on");
+			viewer.setAutoWrap(true);
 		} 
 	};
 	
@@ -456,6 +459,10 @@ TERM.EscapeSequencer = function (viewer){
 		if (params[3] == DIGIT_ONE) {
 			Util.Debug("Reset Cursor Keys from Application Mode back to Cursor Mode");
 			viewer.cursorKeyToAppMode(false);
+		}
+		if (params[3] == DIGIT_SEVEN) {
+			Util.Debug("AutoWrap mode off");
+			viewer.setAutoWrap(false);
 		}
 	};
 	

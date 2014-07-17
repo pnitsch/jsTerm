@@ -17,9 +17,21 @@ TERM.AnsiViewer = function (fontmap){
 	var ctx = canvas.getContext("2d");
 	var scroll = true;
 	var _savedPosition = new TERM.Point();
+        var cursorKeyAppMode = false;
+	var autoWrapMode = true;
+	var currentCursorPosX,currentCursorPosy;
+	var origCursorImg,blinkCursorImg;
+	var cursorBlink = false;
+	var intervalCursorFunction;
 	
 	this.readBytes = function (bytes) {
+		clearInterval(this.intervalCursorFunction);
+		this.undrawCursor();
 		this.parser.parse(bytes);
+		var inst = this;
+		this.intervalCursorFunction = setInterval(function() {
+			inst.drawCursor();
+		}, 500);
 	};
 	
 	this.clearCanvas = function(){
@@ -53,7 +65,7 @@ TERM.AnsiViewer = function (fontmap){
 		this.draw(character);
 		this.cursor.moveForward(1);
 
-		if(!this.cursor.infiniteWidth && this.cursor.x + this.cursor.columnWidth > this.cursor.maxColumnWidth * this.cursor.columnWidth){
+		if(autoWrapMode && !this.cursor.infiniteWidth && this.cursor.x + this.cursor.columnWidth > this.cursor.maxColumnWidth * this.cursor.columnWidth){
 			this.moveDown(1);
 			this.cursor.carriageReturn();
 		}
@@ -153,8 +165,8 @@ TERM.AnsiViewer = function (fontmap){
 	};
 
 	this.moveDown = function(val) {
-		var scrollMax = Math.min(botMargin-1,this.cursor.maxLines);
-		if(this.cursor.y >= this.cursor.lineHeight*(scrollMax-val) && scroll){
+		var scrollMax = Math.min(botMargin-1,this.cursor.maxLines); 
+		if(this.cursor.y > this.cursor.lineHeight*(scrollMax-val) && scroll){
 			this.scrollUp(val);
 		} else {
 			this.cursor.moveDown(val);
@@ -199,7 +211,7 @@ TERM.AnsiViewer = function (fontmap){
 
 	this.displayCleared = function() {
 		ctx.fillStyle = this.cursor.backgroundColor;
-		ctx.fillRect(0, (topMargin - 1) * this.cursor.lineHeight, this.cursor.maxColumnWidth * this.cursor.columnWidth, botMargin * this.cursor.lineHeight);
+		ctx.fillRect(0, (topMargin - 1) * this.cursor.lineHeight, this.cursor.maxColumnWidth * this.cursor.columnWidth, ((botMargin +1) * this.cursor.lineHeight) - (topMargin * this.cursor.lineHeight) ); // calculate the height correctly, botMArgin - topMargin
 	};
 
 	
@@ -291,6 +303,10 @@ TERM.AnsiViewer = function (fontmap){
 	
 	this.cursorKeyToAppMode = function(mode) {
 		cursorKeyAppMode = mode;
+	};
+
+	this.setAutoWrap = function(mode) {
+		autoWrapMode = mode;
 	};
 	
 	this.clearCanvas();
